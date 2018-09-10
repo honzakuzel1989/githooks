@@ -1,0 +1,32 @@
+#!/bin/sh
+
+VERBOSE=0
+
+CURRENT=`git rev-parse --abbrev-ref HEAD`
+
+TMP='tmp012567'
+MASTER='master'
+RELEASE='release'
+
+if [ "$CURRENT" == "$RELEASE" ]; then
+	echo
+	if [ $VERBOSE -lt 0 ]; then
+
+		echo "** custom pre-commit script"
+		echo "== master:  "$MASTER
+		echo "== release: "$RELEASE
+	fi
+	
+	echo "error: cannot make a commit to $RELEASE branch"
+	echo "info: for preserve changes follow next steps"
+        echo -e '\tgit checkout -b' $TMP
+        echo -e '\tgit commit -am' '"'`cat $1`'"'
+        echo -e '\tgit checkout' $MASTER
+        echo -e '\tgit merge --ff' $TMP
+        echo -e '\tgit branch -d' $TMP
+	echo 'one-liner: git checkout -b' $TMP '&& git commit -am '"'`cat $1`'"' && git checkout' $MASTER '&& git merge --ff' $TMP '&& git branch -d' $TMP
+
+	exit 1
+fi
+
+exit 0
