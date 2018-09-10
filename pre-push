@@ -1,0 +1,53 @@
+#!/bin/sh
+
+VERBOSE=1
+
+CURRENT=`git rev-parse --abbrev-ref HEAD`
+
+MASTER="master"
+RELEASE="release"
+
+if [ "$CURRENT" == "$RELEASE" ]; then
+        echo
+        if [ $VERBOSE -lt 0 ]; then
+		echo "** custom pre-push script"
+                echo "== master:  "$MASTER
+                echo "== release: "$RELEASE
+        fi
+        # udava, jake vsechny vetve jsou mergnuty do uvedene, tzn. do MASTER
+        # aby byl RELEASE porad napred, tak musi byt vzdy mergnut do MASTER
+        MERGED=`git branch --merged $MASTER`
+
+        if [ $VERBOSE -lt 0 ]; then
+                echo "== merged: "$MERGED
+        fi
+        # hledani
+        if [[ ! "${MERGED[@]}" =~ "$RELEASE"  ]]; then
+                # master neni pred release - musi byt vzdy - release nemuze byt nikdy napred
+                echo "error: you cannot push to $RELEASE branch because"
+                echo "       $RELEASE branch cannot be AHEAD of $MASTER branch"
+                echo "info: merge $RELEASE branch to $MASTER and push commits again"
+		echo -e '\tgit checkout' $MASTER
+	        echo -e '\tgit merge --ff' $RELEASE
+	        echo -e '\tgit push'
+		echo -e '\tgit checkout' $RELEASE
+		echo -e '\tgit push'
+        	echo 'one-liner: git checkout' $MASTER '&& git merge --ff' $RELEASE '&& git push && git checkout' $RELEASE '&& git push'
+		echo
+
+		exit 1
+	else
+		SHAMASTER=`git rev-parse master`
+		SHAOMASTER=`git rev-parse origin/master`
+		if [ "$SHAMASTER" != "$SHAOMASTER" ]; then
+			echo "error: origin/$MASTER is too old"
+			echo "info: push $MASTER to origin first"
+			echo 'one-liner: git checkout' $MASTER '&& git push && git checkout' $RELEASE '&& git push'
+			echo
+
+			exit 2
+		fi
+	fi
+fi
+
+exit 0
