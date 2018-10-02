@@ -9,7 +9,7 @@ RELEASE="release"
 
 if [ "$CURRENT" == "$RELEASE" ]; then
         echo
-        if [ $VERBOSE -lt 0 ]; then
+        if [ $VERBOSE -gt 0 ]; then
 		echo "** custom pre-push script"
                 echo "== master:  "$MASTER
                 echo "== release: "$RELEASE
@@ -18,7 +18,7 @@ if [ "$CURRENT" == "$RELEASE" ]; then
         # aby byl RELEASE porad napred, tak musi byt vzdy mergnut do MASTER
         MERGED=`git branch --merged $MASTER`
 
-        if [ $VERBOSE -lt 0 ]; then
+        if [ $VERBOSE -gt 0 ]; then
                 echo "== merged: "$MERGED
         fi
         # hledani

@@ -10,7 +10,7 @@ RELEASE='release'
 
 if [ "$CURRENT" == "$RELEASE" ]; then
 	echo
-	if [ $VERBOSE -lt 0 ]; then
+	if [ $VERBOSE -gt 0 ]; then
 
 		echo "** custom pre-commit script"
 		echo "== master:  "$MASTER
