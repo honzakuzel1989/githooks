@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERBOSE=0
+VERBOSE=1
 
 CURRENT=`git rev-parse --abbrev-ref HEAD`
 
